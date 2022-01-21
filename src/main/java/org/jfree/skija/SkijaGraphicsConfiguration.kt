@@ -32,48 +32,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jfree.skija
 
-package org.jfree.skija;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
-import java.awt.image.VolatileImage;
+import java.awt.*
+import java.awt.geom.AffineTransform
+import java.awt.image.BufferedImage
+import java.awt.image.ColorModel
+import java.awt.image.DirectColorModel
+import java.awt.image.VolatileImage
 
 /**
- * A graphics configuration for the {@link SkijaGraphics2D} class.
+ * A graphics configuration for the [SkijaGraphics2D] class.
  */
-public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
-
-    private GraphicsDevice device;
-
-    private final int width, height;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param width  the width of the bounds.
-     * @param height  the height of the bounds.
-     */
-    public SkijaGraphicsConfiguration(int width, int height) {
-        super();
-        this.width = width;
-        this.height = height;
-    }
+class SkijaGraphicsConfiguration
+/**
+ * Creates a new instance.
+ *
+ * @param width  the width of the bounds.
+ * @param height  the height of the bounds.
+ */(private val width: Int, private val height: Int) : GraphicsConfiguration() {
+    private var device: GraphicsDevice? = null
 
     /**
      * Returns the graphics device that this configuration is associated with.
      *
-     * @return The graphics device (never {@code null}).
+     * @return The graphics device (never `null`).
      */
-    @Override
-    public GraphicsDevice getDevice() {
-        if (this.device == null) {
-            this.device = new SkijaGraphicsDevice("SkijaGraphicsDevice", this);
+    override fun getDevice(): GraphicsDevice {
+        if (device == null) {
+            device = SkijaGraphicsDevice("SkijaGraphicsDevice", this)
         }
-        return this.device;
+        return device!!
     }
 
     /**
@@ -81,27 +70,25 @@ public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
      *
      * @return The color model.
      */
-    @Override
-    public ColorModel getColorModel() {
-        return getColorModel(Transparency.TRANSLUCENT);
+    override fun getColorModel(): ColorModel? {
+        return getColorModel(Transparency.TRANSLUCENT)
     }
 
     /**
      * Returns the color model for the specified transparency type, or
-     * {@code null}.
+     * `null`.
      *
      * @param transparency  the transparency type.
      *
-     * @return A color model (possibly {@code null}).
+     * @return A color model (possibly `null`).
      */
-    @Override
-    public ColorModel getColorModel(int transparency) {
-        if (transparency == Transparency.TRANSLUCENT) {
-            return ColorModel.getRGBdefault();
+    override fun getColorModel(transparency: Int): ColorModel? {
+        return if (transparency == Transparency.TRANSLUCENT) {
+            ColorModel.getRGBdefault()
         } else if (transparency == Transparency.OPAQUE) {
-            return new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);
+            DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff)
         } else {
-            return null;
+            null
         }
     }
 
@@ -110,9 +97,8 @@ public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
      *
      * @return The default transform.
      */
-    @Override
-    public AffineTransform getDefaultTransform() {
-        return new AffineTransform();
+    override fun getDefaultTransform(): AffineTransform {
+        return AffineTransform()
     }
 
     /**
@@ -120,9 +106,8 @@ public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
      *
      * @return The normalizing transform.
      */
-    @Override
-    public AffineTransform getNormalizingTransform() {
-        return new AffineTransform();
+    override fun getNormalizingTransform(): AffineTransform {
+        return AffineTransform()
     }
 
     /**
@@ -130,13 +115,12 @@ public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
      *
      * @return The bounds.
      */
-    @Override
-    public Rectangle getBounds() {
-        return new Rectangle(this.width, this.height);
+    override fun getBounds(): Rectangle {
+        return Rectangle(width, height)
     }
 
-    private BufferedImage img;
-    private GraphicsConfiguration gc;
+    private var img: BufferedImage? = null
+    private var gc: GraphicsConfiguration? = null
 
     /**
      * Returns a volatile image.  This method is a workaround for a
@@ -152,15 +136,18 @@ public class SkijaGraphicsConfiguration extends GraphicsConfiguration {
      *
      * @throws AWTException if there is a problem creating the image.
      */
-    @Override
-    public VolatileImage createCompatibleVolatileImage(int width, int height,
-                                                       ImageCapabilities caps, int transparency) throws AWTException {
+    @Throws(AWTException::class)
+    override fun createCompatibleVolatileImage(
+        width: Int, height: Int,
+        caps: ImageCapabilities, transparency: Int
+    ): VolatileImage {
         if (img == null) {
-            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-            gc = img.createGraphics().getDeviceConfiguration();
+            img = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
+            gc = img!!.createGraphics().deviceConfiguration
         }
-        return gc.createCompatibleVolatileImage(width, height, caps,
-                transparency);
+        return gc!!.createCompatibleVolatileImage(
+            width, height, caps,
+            transparency
+        )
     }
-
 }

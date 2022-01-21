@@ -32,65 +32,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jfree.skija
 
-package org.jfree.skija;
-
-import java.awt.*;
-import java.util.function.Function;
+import org.jetbrains.skia.FontStyle
 
 /**
- * Defines the rendering hints that can be used with the {@link SkijaGraphics2D}
- * class.  There is just one hint defined at present:<br>
- * <ul>
- * <li>{@link #KEY_FONT_MAPPING_FUNCTION} that controls whether JavaFX font
- * metrics or Java2D font metrics are used.</li>
- * </ul>
+ * A key used to identify a `Typeface` in a map used to cache items.
  */
-public final class SkijaHints {
+class TypefaceKey
+/**
+ * Creates a new key.
+ *
+ * @param fontName  the font name.
+ * @param style  the style.
+ */(
+    /**
+     * Returns the font name.
+     *
+     * @return The font name.
+     */
+    val fontName: String,
+    /**
+     * Returns the font style.
+     *
+     * @return The font style.
+     */
+    val style: FontStyle
+) {
 
-    private SkijaHints() {
-        // no need to instantiate this
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+        val that = o as TypefaceKey
+        return if (fontName != that.fontName) false else style == that.style
     }
 
-    /**
-     * The key for the hint that provides a font mapper from Java logical fonts to corresponding
-     * physical fonts.  A {@code Function<String, String>} instance (or {@code null}) can be assigned
-     * as the value for this key.
-     */
-    public static final SkijaHints.Key KEY_FONT_MAPPING_FUNCTION
-            = new SkijaHints.Key(0);
-
-    /**
-     * A key for hints used by the {@link SkijaGraphics2D} class.
-     */
-    public static class Key extends RenderingHints.Key {
-
-        /**
-         * Creates a new instance with the specified private key.
-         *
-         * @param privateKey the private key.
-         */
-        public Key(int privateKey) {
-            super(privateKey);
-        }
-
-        /**
-         * Returns {@code true} if {@code val} is a value that is
-         * compatible with this key, and {@code false} otherwise.
-         *
-         * @param val the value.
-         * @return A boolean.
-         */
-        @Override
-        public boolean isCompatibleValue(Object val) {
-            switch (intKey()) {
-                case 0:
-                    return val == null
-                            || val instanceof Function;
-                default:
-                    throw new RuntimeException("Not expected!");
-            }
-        }
+    override fun hashCode(): Int {
+        var result = fontName.hashCode()
+        result = 31 * result + style.hashCode()
+        return result
     }
-
 }

@@ -32,69 +32,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jfree.skija
 
-package org.jfree.skija;
-
-import java.awt.*;
+import java.awt.RenderingHints
+import java.util.function.Function
 
 /**
- * A graphics device for SkijaGraphics2D.
+ * Defines the rendering hints that can be used with the [SkijaGraphics2D]
+ * class.  There is just one hint defined at present:<br></br>
+ *
+ *  * [.KEY_FONT_MAPPING_FUNCTION] that controls whether JavaFX font
+ * metrics or Java2D font metrics are used.
+ *
  */
-public class SkijaGraphicsDevice extends GraphicsDevice {
-
-    private final String id;
-
-    GraphicsConfiguration defaultConfig;
+object SkijaHints {
+    /**
+     * The key for the hint that provides a font mapper from Java logical fonts to corresponding
+     * physical fonts.  A `Function<String, String>` instance (or `null`) can be assigned
+     * as the value for this key.
+     */
+    val KEY_FONT_MAPPING_FUNCTION = Key(0)
 
     /**
-     * Creates a new instance.
-     *
-     * @param id  the id.
-     * @param defaultConfig  the default configuration.
+     * A key for hints used by the [SkijaGraphics2D] class.
      */
-    public SkijaGraphicsDevice(String id, GraphicsConfiguration defaultConfig) {
-        this.id = id;
-        this.defaultConfig = defaultConfig;
-    }
-
+    class Key
     /**
-     * Returns the device type.
+     * Creates a new instance with the specified private key.
      *
-     * @return The device type.
+     * @param privateKey the private key.
      */
-    @Override
-    public int getType() {
-        return GraphicsDevice.TYPE_RASTER_SCREEN;
+        (privateKey: Int) : RenderingHints.Key(privateKey) {
+        /**
+         * Returns `true` if `val` is a value that is
+         * compatible with this key, and `false` otherwise.
+         *
+         * @param val the value.
+         * @return A boolean.
+         */
+        override fun isCompatibleValue(`val`: Any): Boolean {
+            return when (intKey()) {
+                0 -> `val` == null
+                        || `val` is Function<*, *>
+                else -> throw RuntimeException("Not expected!")
+            }
+        }
     }
-
-    /**
-     * Returns the id string (defined in the constructor).
-     *
-     * @return The id string.
-     */
-    @Override
-    public String getIDstring() {
-        return this.id;
-    }
-
-    /**
-     * Returns all configurations for this device.
-     *
-     * @return All configurations for this device.
-     */
-    @Override
-    public GraphicsConfiguration[] getConfigurations() {
-        return new GraphicsConfiguration[] { getDefaultConfiguration() };
-    }
-
-    /**
-     * Returns the default configuration for this device.
-     *
-     * @return The default configuration for this device.
-     */
-    @Override
-    public GraphicsConfiguration getDefaultConfiguration() {
-        return this.defaultConfig;
-    }
-
 }

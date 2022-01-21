@@ -9,6 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <kotlin.version>1.6.10</kotlin.version>
     </properties>
 
     <name>SkijaGraphics2D</name>
@@ -50,27 +51,18 @@
             <activation>
                 <os><family>mac</family></os>
             </activation>
-            <properties>
-                <skija.platform>macos-x64</skija.platform>
-            </properties>
         </profile>
         <profile>
             <id>build-linux</id>
             <activation>
                 <os><family>linux</family></os>
             </activation>
-            <properties>
-                <skija.platform>linux</skija.platform>
-            </properties>
         </profile>
         <profile>
             <id>build-windows</id>
             <activation>
                 <os><family>windows</family></os>
             </activation>
-            <properties>
-                <skija.platform>windows</skija.platform>
-            </properties>
         </profile>
 
         <profile>
@@ -142,16 +134,21 @@
 
     <repositories>
         <repository>
-            <id>space-maven</id>
-            <url>https://packages.jetbrains.team/maven/p/skija/maven</url>
+            <id>space-maven-compose</id>
+            <url>https://maven.pkg.jetbrains.space/public/p/compose/dev</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>io.github.humbleui</groupId>
-            <artifactId>skija-${skija.platform}</artifactId>
-            <version>0.98.1</version>
+            <groupId>org.jetbrains.skiko</groupId>
+            <artifactId>skiko-jvm</artifactId>
+            <version>0.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.skiko</groupId>
+            <artifactId>skiko-jvm-runtime-macos-x64</artifactId>
+            <version>0.6.6</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -175,6 +172,22 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -190,17 +203,6 @@
                 <version>3.2.0</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
-                    <encoding>${project.build.sourceEncoding}</encoding>               
                 </configuration>
             </plugin>
             <plugin>
@@ -243,6 +245,57 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
             </plugin>
         </plugins>
     </build>

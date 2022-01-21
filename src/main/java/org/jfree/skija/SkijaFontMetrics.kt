@@ -32,38 +32,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jfree.skija
 
-package org.jfree.skija;
-
-import io.github.humbleui.skija.FontMetrics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
+import org.jetbrains.skia.*
+import org.slf4j.LoggerFactory
+import java.awt.Font
+import java.awt.FontMetrics
 
 /**
  * Returns font metrics.
  */
-public class SkijaFontMetrics extends java.awt.FontMetrics {
+class SkijaFontMetrics(skijaFont: org.jetbrains.skia.Font?, awtFont: Font?) :
+    FontMetrics(awtFont) {
+    /** Skija font.  */
+    private val skijaFont: org.jetbrains.skia.Font?
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkijaFontMetrics.class);
-
-    /** Skija font. */
-    private io.github.humbleui.skija.Font skijaFont;
-
-    /** Skija font metrics. */
-    private FontMetrics metrics;
+    /** Skija font metrics.  */
+    private val metrics: org.jetbrains.skia.FontMetrics
 
     /**
      * Creates a new instance.
      *
-     * @param skijaFont  the Skija font ({@code null} not permitted).
-     * @param awtFont  the AWT font ({@code null} not permitted).
+     * @param skijaFont  the Skija font (`null` not permitted).
+     * @param awtFont  the AWT font (`null` not permitted).
      */
-    public SkijaFontMetrics(io.github.humbleui.skija.Font skijaFont, Font awtFont) {
-        super(awtFont);
-        this.metrics = skijaFont.getMetrics();
-        this.skijaFont = skijaFont;
+    init {
+        metrics = skijaFont!!.metrics
+        this.skijaFont = skijaFont
     }
 
     /**
@@ -71,11 +66,10 @@ public class SkijaFontMetrics extends java.awt.FontMetrics {
      *
      * @return The leading.
      */
-    @Override
-    public int getLeading() {
-        int result = (int) this.metrics.getLeading();
-        LOGGER.debug("getLeading() -> {}", result);
-        return result;
+    override fun getLeading(): Int {
+        val result = metrics.leading.toInt()
+        LOGGER.debug("getLeading() -> {}", result)
+        return result
     }
 
     /**
@@ -83,11 +77,10 @@ public class SkijaFontMetrics extends java.awt.FontMetrics {
      *
      * @return The ascent.
      */
-    @Override
-    public int getAscent() {
-        int result = (int) -this.metrics.getAscent();
-        LOGGER.debug("getAscent() -> {}", result);
-        return result;
+    override fun getAscent(): Int {
+        val result = -metrics.ascent.toInt()
+        LOGGER.debug("getAscent() -> {}", result)
+        return result
     }
 
     /**
@@ -95,11 +88,10 @@ public class SkijaFontMetrics extends java.awt.FontMetrics {
      *
      * @return The descent.
      */
-    @Override
-    public int getDescent() {
-        int result = (int) this.metrics.getDescent();
-        LOGGER.debug("getDescent() -> {}", result);
-        return result;
+    override fun getDescent(): Int {
+        val result = metrics.descent.toInt()
+        LOGGER.debug("getDescent() -> {}", result)
+        return result
     }
 
     /**
@@ -109,11 +101,10 @@ public class SkijaFontMetrics extends java.awt.FontMetrics {
      *
      * @return The width.
      */
-    @Override
-    public int charWidth(char ch) {
-        int result = (int) this.skijaFont.measureTextWidth(Character.toString(ch));
-        LOGGER.debug("charWidth({}) -> {}", ch, result);
-        return result;
+    override fun charWidth(ch: Char): Int {
+        val result = skijaFont!!.measureTextWidth(Character.toString(ch)).toInt()
+        LOGGER.debug("charWidth({}) -> {}", ch, result)
+        return result
     }
 
     /**
@@ -125,10 +116,13 @@ public class SkijaFontMetrics extends java.awt.FontMetrics {
      *
      * @return The width of the character sequence.
      */
-    @Override
-    public int charsWidth(char[] data, int off, int len) {
-        int result = (int) this.skijaFont.measureTextWidth(new String(data, off, len));
-        LOGGER.debug("charsWidth({}, {}, {}) -> {}", data, off, len, result);
-        return result;
+    override fun charsWidth(data: CharArray, off: Int, len: Int): Int {
+        val result = skijaFont!!.measureTextWidth(String(data, off, len)).toInt()
+        LOGGER.debug("charsWidth({}, {}, {}) -> {}", data, off, len, result)
+        return result
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(SkijaFontMetrics::class.java)
     }
 }

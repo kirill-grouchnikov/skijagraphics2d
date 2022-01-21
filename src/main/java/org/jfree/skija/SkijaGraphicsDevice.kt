@@ -32,64 +32,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+package org.jfree.skija
 
-package org.jfree.skija;
-
-import io.github.humbleui.skija.FontStyle;
+import java.awt.GraphicsConfiguration
+import java.awt.GraphicsDevice
 
 /**
- * A key used to identify a {@code Typeface} in a map used to cache items.
+ * A graphics device for SkijaGraphics2D.
  */
-public class TypefaceKey {
-
-    private final String fontName;
-
-    private final FontStyle style;
-
+class SkijaGraphicsDevice
+/**
+ * Creates a new instance.
+ *
+ * @param id  the id.
+ * @param defaultConfig  the default configuration.
+ */(private val id: String, var defaultConfig: GraphicsConfiguration) : GraphicsDevice() {
     /**
-     * Creates a new key.
+     * Returns the device type.
      *
-     * @param fontName  the font name.
-     * @param style  the style.
+     * @return The device type.
      */
-    public TypefaceKey(String fontName, FontStyle style) {
-        this.fontName = fontName;
-        this.style = style;
-    }
-
-    /**
-     * Returns the font name.
-     *
-     * @return The font name.
-     */
-    public String getFontName() {
-        return fontName;
+    override fun getType(): Int {
+        return TYPE_RASTER_SCREEN
     }
 
     /**
-     * Returns the font style.
+     * Returns the id string (defined in the constructor).
      *
-     * @return The font style.
+     * @return The id string.
      */
-    public FontStyle getStyle() {
-        return style;
+    override fun getIDstring(): String {
+        return id
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TypefaceKey that = (TypefaceKey) o;
-
-        if (!fontName.equals(that.fontName)) return false;
-        return style.equals(that.style);
+    /**
+     * Returns all configurations for this device.
+     *
+     * @return All configurations for this device.
+     */
+    override fun getConfigurations(): Array<GraphicsConfiguration> {
+        return arrayOf(defaultConfiguration)
     }
 
-    @Override
-    public int hashCode() {
-        int result = fontName.hashCode();
-        result = 31 * result + style.hashCode();
-        return result;
+    /**
+     * Returns the default configuration for this device.
+     *
+     * @return The default configuration for this device.
+     */
+    override fun getDefaultConfiguration(): GraphicsConfiguration {
+        return defaultConfig
     }
 }
